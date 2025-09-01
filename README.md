@@ -1,10 +1,11 @@
-# WenetConformerAsr
+# WenetAsr
 A C# library for decoding the Wenet ASR onnx model
 
+##### 简介：
 这是一个用于解码 wenet asr onnx 模型的c#库，使用c#编写，基于.net6.0，支持在多平台（包括windows、linux、android、macos、ios等）编译、调用。
 
 可以使用maui或uno迅速构建可在多平台运行的应用程序。
-##### 项目中WenetConformerAsr和WenetConformerAsr2的区别:
+##### 项目中WenetAsr和WenetAsr2的区别:
 1.共同之处：
 
 功能一样，调用的方式一样，都支持streaming和non-streaming模型的解码。
@@ -13,21 +14,25 @@ A C# library for decoding the Wenet ASR onnx model
 
 | library  | streaming和non-streaming模型加载模块  |模型和扩展|
 | ------------ | ------------ |------------|
-| WenetConformerAsr  | 合二为一  |1.加载wenet官方导出的onnx模型，代码简洁|
-| WenetConformerAsr2  |各自独立   |1.加载wenet官方导出的onnx模型。2.便于扩展，如果自己导出的streaming和non-streaming onnx模型配置参数不尽相同，可以在各自的模块上进行调整而互不影响|
+| WenetAsr  | 合二为一  |1.加载wenet官方导出的onnx模型，代码简洁|
+| WenetAsr2  |各自独立   |1.加载wenet官方导出的onnx模型。2.便于扩展，如果自己导出的streaming和non-streaming onnx模型配置参数不尽相同，可以在各自的模块上进行调整而互不影响|
 
-如果没有二次开发的需求，想要直接使用wenet官导onnx模型，推荐使用WenetConformerAsr.
+如果没有二次开发的需求，想要直接使用wenet官导onnx模型，推荐使用WenetAsr.
 
-##### 模型的下载
-| 模型名称  |  类型 | 实时率RTF  | 支持语言  | 标点  |  时间戳 | 下载地址  |
-| ------------ | ------------ | ------------ | ------------ | ------------ | ------------ | ------------ |
-|  wenet-u2pp-conformer-aishell-onnx-online-20210601 | 流式  | cpu-rtf-0.16  | 中文  |  否 | 否  |[modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-aishell-onnx-online-20210601 "modelscope") |
-|  wenet-u2pp-conformer-wenetspeech-onnx-online-20220506 | 流式 | cpu-rtf-0.16  |  中文 |  否  | 否  | [modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-wenetspeech-onnx-online-20220506 "modelscope")  |
+##### 支持的模型（ONNX）
+| 模型名称  |  类型 |  支持语言  | 下载地址  |
+| ------------ | ------------ | ------------ | ------------ |
+|  wenet-u2pp-conformer-aishell-onnx-online-20210601 | 流式  | 中文  |[modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-aishell-onnx-online-20210601 "modelscope") |
+|  wenet-u2pp-conformer-aishell-onnx-offline-20210601 | 离线  | 中文  |  [modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-aishell-onnx-offline-20210601 "modelscope") |
+|  wenet-u2pp-conformer-wenetspeech-onnx-online-20220506 | 流式 |  中文 | [modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-wenetspeech-onnx-online-20220506 "modelscope")  |
+|  wenet-u2pp-conformer-wenetspeech-onnx-offline-20220506 | 离线 |  中文  | [modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-wenetspeech-onnx-offline-20220506 "modelscope")  |
+|  wenet-u2pp-conformer-gigaspeech-onnx-online-20210728 | 流式 |  英文 |  [modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-gigaspeech-onnx-online-20210728 "modelscope")  |
+|  wenet-u2pp-conformer-gigaspeech-onnx-offline-20210728 | 离线 |  英文  | [modelscope](https://www.modelscope.cn/models/manyeyes/wenet-u2pp-conformer-gigaspeech-onnx-offline-20210728 "modelscope")  |
 
 ## 离线（非流式）模型调用方法：
 ###### 1.添加项目引用
 ```csharp
-using WenetConformerAsr;
+using WenetAsr;
 ```
 ###### 2.模型初始化和配置
 ```csharp
@@ -38,14 +43,14 @@ string encoderFilePath = applicationBase + "./" + modelName + "/encoder.int8.onn
 string decoderFilePath = applicationBase + "./" + modelName + "/decoder.int8.onnx";
 string ctcFilePath = applicationBase + "./" + modelName + "/ctc.int8.onnx";
 string tokensFilePath = applicationBase + "./" + modelName + "/tokens.txt";
-WenetConformerAsr.OfflineRecognizer offlineRecognizer = new WenetConformerAsr.OfflineRecognizer(encoderFilePath, decoderFilePath, ctcFilePath, tokensFilePath);
+WenetAsr.OfflineRecognizer offlineRecognizer = new WenetAsr.OfflineRecognizer(encoderFilePath, decoderFilePath, ctcFilePath, tokensFilePath);
 ```
 ###### 3.调用
 ```csharp
-//这里省略音频文件到sample的转换，具体可以参考examples中的test_WenetConformerAsrOfflineRecognizer
-WenetConformerAsr.OfflineStream stream = offlineRecognizer.CreateOfflineStream();
+//这里省略音频文件到sample的转换，具体可以参考examples中的test_WenetAsrOfflineRecognizer
+WenetAsr.OfflineStream stream = offlineRecognizer.CreateOfflineStream();
 stream.AddSamples(sample);
-WenetConformerAsr.Model.OfflineRecognizerResultEntity result = offlineRecognizer.GetResult(stream);
+WenetAsr.Model.OfflineRecognizerResultEntity result = offlineRecognizer.GetResult(stream);
 Console.WriteLine(result.Text);
 ```
 ###### 4.输出结果：
@@ -83,7 +88,7 @@ end!
 
 ###### 1.添加项目引用
 ```csharp
-using WenetConformerAsr;
+using WenetAsr;
 ```
 ###### 2.模型初始化和配置
 ```csharp
@@ -94,18 +99,18 @@ string encoderFilePath = applicationBase + "./" + modelName + "/encoder.int8.onn
 string decoderFilePath = applicationBase + "./" + modelName + "/decoder.int8.onnx";
 string ctcFilePath = applicationBase + "./" + modelName + "/ctc.int8.onnx";
 string tokensFilePath = applicationBase + "./" + modelName + "/tokens.txt";
-WenetConformerAsr.OnlineRecognizer onlineRecognizer = new WenetConformerAsr.OnlineRecognizer(encoderFilePath, decoderFilePath, ctcFilePath, tokensFilePath);
+WenetAsr.OnlineRecognizer onlineRecognizer = new WenetAsr.OnlineRecognizer(encoderFilePath, decoderFilePath, ctcFilePath, tokensFilePath);
 ```
 ###### 3.调用
 ```csharp
-//这里省略音频文件到sample的转换，或者来自于麦克风，具体如何做，可以参考examples中的test_WenetConformerAsrOnlineRecognizer
-WenetConformerAsr.OnlineStream stream = onlineRecognizer.CreateOnlineStream();
+//这里省略音频文件到sample的转换，或者来自于麦克风，具体如何做，可以参考examples中的test_WenetAsrOnlineRecognizer
+WenetAsr.OnlineStream stream = onlineRecognizer.CreateOnlineStream();
 while (true)
 {
     //这是一个简单的解码示意，如需了解更详细周密的流程，请参考examples
 	//sample=来自音频文件或麦克风
     stream.AddSamples(sample);
-    WenetConformerAsr.Model.OnlineRecognizerResultEntity result = onlineRecognizer.GetResult(stream);
+    WenetAsr.Model.OnlineRecognizerResultEntity result = onlineRecognizer.GetResult(stream);
     Console.WriteLine(result.Text);
 }
 ```
@@ -573,3 +578,23 @@ total_duration:13052
 rtf:0.16463772314587802
 end!
 ```
+
+###### 相关工程：
+* 语音端点检测，解决长音频合理切分的问题，项目地址：[AliFsmnVad](https://github.com/manyeyes/AliFsmnVad "AliFsmnVad") 
+* 文本标点预测，解决识别结果没有标点的问题，项目地址：[AliCTTransformerPunc](https://github.com/manyeyes/AliCTTransformerPunc "AliCTTransformerPunc")
+
+###### 其他说明：
+
+测试用例：WenetAsr.Examples。
+测试CPU：Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz   2.59 GHz
+支持平台：
+Windows 7 SP1或更高版本,
+macOS 10.13 (High Sierra) 或更高版本,ios等，
+Linux 发行版（需要特定的依赖关系，详见.NET 6支持的Linux发行版列表），
+Android（Android 5.0 (API 21) 或更高版本）。
+示例中计算音频samples：NAudio库。
+
+引用参考
+----------
+[1] https://github.com/wenet-e2e/wenet
+[2] https://github.com/naudio/NAudio
