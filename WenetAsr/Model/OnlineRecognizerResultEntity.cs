@@ -1,6 +1,6 @@
 ﻿// See https://github.com/manyeyes for more information
 // Copyright (c)  2023 by manyeyes
-namespace WenetAsr
+namespace WenetAsr.Model
 {
     /// <summary>
     /// online recognizer result entity 
@@ -11,18 +11,21 @@ namespace WenetAsr
         /// <summary>
         /// recognizer result
         /// </summary>
-        public string? text { get; set; }
+        public string? Text { get; set; }
         /// <summary>
         /// recognizer result length
         /// </summary>
-        public int text_len { get; set; }
+        public int TextLen { get; set; }
         /// <summary>
         /// decode tokens
         /// </summary>
-        public List<string>? tokens { get; set; }
+        //public List<string>? tokens { get; set; }
+        public List<string>? Tokens { get; set; } = new List<string>();
+
         /// <summary>
         /// timestamps
         /// </summary>
-        public List<float>? timestamps { get; set; }
+        //public List<int[]>? timestamps { get; set; }
+        public List<int[]>? Timestamps { get; set; } = new List<int[]>();
     }
 }

@@ -9,8 +9,10 @@ namespace WenetAsr
     /// offline recognizer package
     /// Copyright (c)  2023 by manyeyes
     /// </summary>
-    public class OfflineRecognizer
+    public class OfflineRecognizer : IDisposable
     {
+        private bool _disposed;
+
         private string[] _tokens;
         private IAsrProj _asrProj;
 
@@ -23,8 +25,8 @@ namespace WenetAsr
 
         public OfflineStream CreateOfflineStream()
         {
-            OfflineStream onlineStream = new OfflineStream(_asrProj);
-            return onlineStream;
+            OfflineStream offlineStream = new OfflineStream(_asrProj);
+            return offlineStream;
         }
         public OfflineRecognizerResultEntity GetResult(OfflineStream stream)
         {
@@ -110,7 +112,7 @@ namespace WenetAsr
 
         private List<OfflineRecognizerResultEntity> DecodeMulti(List<OfflineStream> streams)
         {
-            List<OfflineRecognizerResultEntity> onlineRecognizerResultEntities = new List<OfflineRecognizerResultEntity>();
+            List<OfflineRecognizerResultEntity> offlineRecognizerResultEntities = new List<OfflineRecognizerResultEntity>();
 #pragma warning disable CS8602 // 解引用可能出现空引用。
             foreach (OfflineStream stream in streams)
             {
@@ -135,13 +137,13 @@ namespace WenetAsr
                         }
                     }
                 }
-                OfflineRecognizerResultEntity onlineRecognizerResultEntity = new OfflineRecognizerResultEntity();
-                onlineRecognizerResultEntity.Text = text_result.Replace("@@▁▁", "").Replace("@@▁", "").Replace("▁▁▁", " ").Replace("▁▁", "").Replace("▁", "").ToLower();
-                onlineRecognizerResultEntities.Add(onlineRecognizerResultEntity);
+                OfflineRecognizerResultEntity offlineRecognizerResultEntity = new OfflineRecognizerResultEntity();
+                offlineRecognizerResultEntity.Text = text_result.Replace("@@▁▁", "").Replace("@@▁", "").Replace("▁▁▁", " ").Replace("▁▁", "").Replace("▁", "").ToLower();
+                offlineRecognizerResultEntities.Add(offlineRecognizerResultEntity);
             }
 #pragma warning restore CS8602 // 解引用可能出现空引用。
 
-            return onlineRecognizerResultEntities;
+            return offlineRecognizerResultEntities;
         }
 
         /// <summary>
@@ -163,6 +165,42 @@ namespace WenetAsr
                 return true;
             else
                 return false;
+        }
+
+        public void DisposeOfflineStream(OfflineStream offlineStream)
+        {
+            if (offlineStream != null)
+            {
+                offlineStream.Dispose();
+            }
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    if (_asrProj != null)
+                    {
+                        _asrProj.Dispose();
+                    }
+                    if (_tokens != null)
+                    {
+                        _tokens = null;
+                    }
+                }
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        ~OfflineRecognizer()
+        {
+            Dispose(_disposed);
         }
     }
 }

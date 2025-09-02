@@ -4,8 +4,10 @@ using WenetAsr.Model;
 
 namespace WenetAsr
 {
-    public class OnlineStream
+    public class OnlineStream:IDisposable
     {
+        private bool _disposed;
+
         private FrontendConfEntity _frontendConfEntity;
         private WavFrontend _wavFrontend;
         private AsrInputEntity _asrInputEntity;
@@ -283,6 +285,33 @@ namespace WenetAsr
                 return false;
             }
         }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    if (_wavFrontend != null)
+                    {
+                        _wavFrontend.Dispose();
+                    }
+                    if (_tokens != null)
+                    {
+                        _tokens = null;
+                    }
+                }
+                _disposed = true;
+            }
+        }
 
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        ~OnlineStream()
+        {
+            Dispose(_disposed);
+        }
     }
 }
