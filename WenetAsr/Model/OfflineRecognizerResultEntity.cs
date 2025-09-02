@@ -8,8 +8,8 @@ namespace WenetAsr.Model
     /// </summary>
     public class OfflineRecognizerResultEntity
     {
-        private List<string>? _tokens=new List<string>();
-        private List<int[]>? _timestamps=new List<int[]>();
+        private List<string>? _tokens = new List<string>();
+        private List<int[]>? _timestamps = new List<int[]>();
         /// <summary>
         /// recognizer result
         /// </summary>

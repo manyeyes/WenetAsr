@@ -6,11 +6,13 @@ using WenetAsr.Model;
 namespace WenetAsr
 {
     /// <summary>
-    /// offline recognizer package
+    /// online recognizer package
     /// Copyright (c)  2023 by manyeyes
     /// </summary>
-    public class OnlineRecognizer
+    public class OnlineRecognizer : IDisposable
     {
+        private bool _disposed;
+
         private string[] _tokens;
         private IAsrProj _asrProj;
 
@@ -25,6 +27,14 @@ namespace WenetAsr
         {
             OnlineStream onlineStream = new OnlineStream(_asrProj);
             return onlineStream;
+        }
+        public OnlineRecognizerResultEntity GetResult(OnlineStream stream)
+        {
+            List<OnlineStream> streams = new List<OnlineStream>();
+            streams.Add(stream);
+            OnlineRecognizerResultEntity onlineRecognizerResultEntity = GetResults(streams)[0];
+
+            return onlineRecognizerResultEntity;
         }
 
         public List<OnlineRecognizerResultEntity> GetResults(List<OnlineStream> streams)
@@ -132,7 +142,7 @@ namespace WenetAsr
                     }
                 }
                 OnlineRecognizerResultEntity onlineRecognizerResultEntity = new OnlineRecognizerResultEntity();
-                onlineRecognizerResultEntity.text = text_result.Replace("@@▁▁", "").Replace("@@▁", "").Replace("▁▁▁", " ").Replace("▁▁", " ").Replace("▁", "").ToLower();
+                onlineRecognizerResultEntity.Text = text_result.Replace("@@▁▁", "").Replace("@@▁", "").Replace("▁▁▁", " ").Replace("▁▁", " ").Replace("▁", "").ToLower();
                 onlineRecognizerResultEntities.Add(onlineRecognizerResultEntity);
             }
 #pragma warning restore CS8602 // 解引用可能出现空引用。
@@ -159,6 +169,42 @@ namespace WenetAsr
                 return true;
             else
                 return false;
+        }
+
+        public void DisposeOnlineStream(OnlineStream onlineStream)
+        {
+            if (onlineStream != null)
+            {
+                onlineStream.Dispose();
+            }
+        }
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    if (_asrProj != null)
+                    {
+                        _asrProj.Dispose();
+                    }
+                    if (_tokens != null)
+                    {
+                        _tokens = null;
+                    }
+                }
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        ~OnlineRecognizer()
+        {
+            Dispose(_disposed);
         }
     }
 }

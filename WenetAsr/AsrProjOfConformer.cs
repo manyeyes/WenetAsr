@@ -7,8 +7,10 @@ using WenetAsr.Utils;
 
 namespace WenetAsr
 {
-    internal class AsrProjOfConformer : IAsrProj
+    internal class AsrProjOfConformer : IAsrProj,IDisposable
     {
+        private bool _disposed;
+
         private InferenceSession _encoderSession;
         private InferenceSession _decoderSession;
         private InferenceSession _ctcSession;
@@ -410,6 +412,39 @@ namespace WenetAsr
             }
             //score += prob[hyp.Length * decode_out_len + eos];
             return score;
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed)
+            {
+                if (disposing)
+                {
+                    if (_encoderSession != null)
+                    {
+                        _encoderSession.Dispose();
+                    }
+                    if (_decoderSession != null)
+                    {
+                        _decoderSession.Dispose();
+                    }
+                    if (_ctcSession != null)
+                    {
+                        _ctcSession = null;
+                    }
+                }
+                _disposed = true;
+            }
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            GC.SuppressFinalize(this);
+        }
+        ~AsrProjOfConformer()
+        {
+            Dispose(_disposed);
         }
     }
 }

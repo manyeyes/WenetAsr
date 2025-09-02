@@ -19,7 +19,7 @@ namespace WenetAsr
         {
             get;
             set;
-        }        
+        }
         CustomMetadata CustomMetadata
         {
             get;
@@ -70,5 +70,6 @@ namespace WenetAsr
         internal EncoderOutputEntity EncoderProj(List<AsrInputEntity> modelInputs, List<float[]> statesList, int offset);
         internal DecoderOutputEntity DecoderProj(EncoderOutputEntity encoderOutputEntity, CtcOutputEntity ctcOutputEntity, int batchSize = 1);
         internal CtcOutputEntity CtcProj(EncoderOutputEntity encoderOutput);
+        internal void Dispose();
     }
 }
